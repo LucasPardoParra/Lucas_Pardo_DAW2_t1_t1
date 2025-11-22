@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>♥️♣️Casino Royale♦️♠️</title>
+
+    <!-- Enlaces a Bootstrap y SweetAlert2 desde CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+
+  <body>
+    <h1>¡Bienvenido al Casino Royale!</h1>
+    <p>Disfruta de nuestro juego más popular: el blackjack</p>
+
+    <!-- Sección con la información de la banca (nombre, puntos, cartas) -->
+    <section id="banca-info">
+      <!-- El span se actualizará desde JS -->
+      <h2>Puntos de la banca: <span id="puntos-banca">0</span></h2>
+      <div id="cartas-banca"></div>
+    </section>
+
+    <!-- Sección con la información del jugador (nombre, puntos, cartas) -->
+    <section id="jugador-info">
+      <!-- El span se actualizará desde JS, tanto el nombre del jugador como los puntos -->
+      <h2>
+        Puntos de <span id="nombre-jugador">: </span
+        ><span id="puntos-jugador">0</span>
+      </h2>
+      <div id="cartas-jugador"></div>
+    </section>
+
+    <!-- Botones que controlan el funcionamiento del juego -->
+    <section id="btns-control">
+      <!-- Si se pulsa el botón, se pide una nueva carta -->
+      <button id="btn-pedir-carta">Pedir carta</button>
+      <!-- Si se pulsa el botón, el jugador se planta y empieza a jugar la banca -->
+      <button id="btn-plantarse">Plantarse</button>
+    </section>
+
+    <!-- Aquí se mostrará el resultado de la partida -->
+    <section id="msg-final"></section>
+
+    <!-- Enlace al JS externo -->
+    <script src="script.js"></script>
+  </body>
+</html>
