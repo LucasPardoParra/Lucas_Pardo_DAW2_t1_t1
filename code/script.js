@@ -24,15 +24,6 @@ let baraja = [
   41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
 ];
 
-/*
-Orden a seguir de funciones:
-- Se carga el juego (pregunta por nombre, etc.)
-- Reparto inicial (una yo, una el, una yo). Las cartas sacadas se eliminan y los puntos se suman
-- Decido (botones: si pido, otra; si me planto, sigue el juego)
-- Juega la máquina
-- Comparacion y resultados
-*/
-
 // Empieza el juego
 window.onload = iniciarJuego;
 
@@ -63,7 +54,12 @@ function repartoInicial() {
   darCarta(divCartasJugador, 500);
   darCarta(divCartasBanca, 1500);
   darCarta(divCartasJugador, 2500);
-  turnoJugador();
+
+  // Una vez se han repartido las cartas, llamamos a turnoJugador
+  // Le ponemos un delay para que los botones se mantengan desactivados durante el reparto
+  setTimeout(() => {
+    turnoJugador();
+  }, 2500);
 }
 
 function turnoJugador() {
@@ -93,6 +89,9 @@ function plantarseJugador() {
 function turnoBanca() {
   if (juegoTerminado) return;
 
+  btnPedir.disabled = true;
+  btnPlantarse.disabled = true;
+
   // Si la banca ya tiene 17 o más, dejamos de darle cartas
   if (puntosBanca >= 17) {
     comprobarDerrota("banca");
@@ -106,7 +105,7 @@ function turnoBanca() {
   // para dejar que darCarta termine y actualice puntosBanca
   setTimeout(() => {
     turnoBanca();
-  }, 700);
+  }, 1000);
 }
 
 function darCarta(contenedorCartas, delay) {
@@ -159,8 +158,6 @@ function comprobarDerrota(quienHaJugado) {
   if (quienHaJugado === "jugador") {
     // Si el jugador consigue 21, se planta automáticamente y juega la banca
     if (puntosJugador === 21) {
-      btnPedir.disabled = true;
-      btnPlantarse.disabled = true;
       turnoBanca();
       return true;
     }
