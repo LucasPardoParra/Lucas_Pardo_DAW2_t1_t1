@@ -108,113 +108,6 @@ function turnoBanca() {
   }, 1000);
 }
 
-function darCarta(contenedorCartas, delay) {
-  setTimeout(() => {
-    while (true) {
-      const indiceAleatorio = Math.floor(Math.random() * baraja.length);
-      const numFoto = baraja[indiceAleatorio];
-
-      if (numFoto === 0 || numFoto === null) continue;
-
-      carta = numFoto;
-      baraja[indiceAleatorio] = null;
-      break;
-    }
-
-    // Pintar carta
-    const imgCarta = document.createElement("img");
-    imgCarta.src = `../img/${carta}.png`;
-    contenedorCartas.appendChild(imgCarta);
-
-    // Calcular valor de la carta
-    const valorCarta = calcularPuntos(carta);
-
-    // Comprobamos a quién hay que sumar los puntos de la carta sacada
-    if (contenedorCartas === divCartasJugador) {
-      puntosJugador += valorCarta;
-      spanPuntosJugador.textContent = puntosJugador;
-
-      // Sacamos la información por consola, por si acaso
-      console.log(
-        `Jugador recibe carta ${carta} (valor ${valorCarta}) → total: ${puntosJugador}`
-      );
-
-      comprobarDerrota("jugador");
-    } else if (contenedorCartas === divCartasBanca) {
-      puntosBanca += valorCarta;
-      spanPuntosBanca.textContent = puntosBanca;
-
-      // Sacamos la información por consola, por si acaso
-      console.log(
-        `Banca recibe carta ${carta} (valor ${valorCarta}) → total: ${puntosBanca}`
-      );
-
-      comprobarDerrota("banca");
-    }
-  }, delay);
-}
-
-function comprobarDerrota(quienHaJugado) {
-  if (quienHaJugado === "jugador") {
-    // Si el jugador consigue 21, se planta automáticamente y juega la banca
-    if (puntosJugador === 21) {
-      turnoBanca();
-      return true;
-    }
-
-    // Si el jugador se pasa, gana la banca
-    if (puntosJugador > 21) {
-      finalizarJuego("banca");
-      return true;
-    }
-  } else if (quienHaJugado === "banca") {
-    // Si la banca se pasa de 21, gana el jugador
-    if (puntosBanca > 21) {
-      finalizarJuego("jugador");
-      return true;
-    }
-
-    // Si la banca tiene menos de 17, todavía no decide nada
-    if (puntosBanca < 17) {
-      return false;
-    }
-
-    // A partir de aquí, banca tiene 17 o más → ya puede decidirse el resultado
-
-    // Si ambos tienen los mismos puntos
-    if (puntosBanca === puntosJugador) {
-      if (puntosBanca === 21 && puntosJugador === 21) {
-        finalizarJuego("empate21");
-      } else {
-        finalizarJuego("empate");
-      }
-      return true;
-    }
-
-    // Si la banca tiene más puntos que el jugador
-    if (puntosBanca > puntosJugador) {
-      if (puntosBanca === 21) {
-        finalizarJuego("banca21");
-      } else {
-        finalizarJuego("banca");
-      }
-      return true;
-    }
-
-    // Si la banca tiene menos puntos que el jugador
-    if (puntosBanca < puntosJugador) {
-      if (puntosJugador === 21) {
-        finalizarJuego("jugador21");
-      } else {
-        finalizarJuego("jugador");
-      }
-      return true;
-    }
-  }
-
-  return false; // La partida sigue
-}
-
 function finalizarJuego(ganador) {
   btnPedir.disabled = true;
   btnPlantarse.disabled = true;
@@ -250,8 +143,116 @@ function finalizarJuego(ganador) {
   msgFinal.textContent = mensaje;
 }
 
+// A partir de aquí encontramos métodos comunes que son llamados más de una vez
+// en el juego.
+
+// Damos una carta a un contenedor de cartas, la imprimimos por pantalla y actualizamos los puntos
+function darCarta(contenedorCartas, delay) {
+  setTimeout(() => {
+    while (true) {
+      const indiceAleatorio = Math.floor(Math.random() * baraja.length);
+      const numFoto = baraja[indiceAleatorio];
+
+      if (numFoto === 0 || numFoto === null) continue;
+
+      carta = numFoto;
+      baraja[indiceAleatorio] = null;
+      break;
+    }
+
+    // Pintar carta
+    const imgCarta = document.createElement("img");
+    imgCarta.src = `../img/${carta}.png`;
+    contenedorCartas.appendChild(imgCarta);
+
+    // Calcular valor de la carta
+    const valorCarta = calcularPuntos(carta);
+
+    // Comprobamos a quién hay que sumar los puntos de la carta sacada
+    if (contenedorCartas === divCartasJugador) {
+      puntosJugador += valorCarta;
+      spanPuntosJugador.textContent = puntosJugador;
+
+      comprobarDerrota("jugador");
+    } else if (contenedorCartas === divCartasBanca) {
+      puntosBanca += valorCarta;
+      spanPuntosBanca.textContent = puntosBanca;
+
+      comprobarDerrota("banca");
+    }
+  }, delay);
+}
+
+// Comprobamos si el jugador o la banca ha perdido tras dar cada carta
+function comprobarDerrota(quienHaJugado) {
+  if (quienHaJugado === "jugador") {
+    // Si el jugador consigue 21, se planta automáticamente y juega la banca
+    if (puntosJugador === 21) {
+      turnoBanca();
+      return true;
+    }
+
+    // Si el jugador se pasa, gana la banca
+    if (puntosJugador > 21) {
+      finalizarJuego("banca");
+      return true;
+    }
+  } else if (quienHaJugado === "banca") {
+    // Si la banca se pasa de 21, gana el jugador
+    if (puntosBanca > 21) {
+      finalizarJuego("jugador");
+      return true;
+    }
+
+    // Si la banca tiene menos de 17, todavía no decide nada
+    if (puntosBanca < 17) {
+      return false;
+    }
+
+    // A partir de aquí, la banca tiene 17 o más, así que ya puede decidirse el resultado
+
+    // Si ambos tienen los mismos puntos
+    if (puntosBanca === puntosJugador) {
+      if (puntosBanca === 21 && puntosJugador === 21) {
+        // Si además ambos tienen 21, es un empate especial
+        finalizarJuego("empate21");
+      } else {
+        // Si no, es un empate normal
+        finalizarJuego("empate");
+      }
+      return true;
+    }
+
+    // Si la banca tiene más puntos que el jugador
+    if (puntosBanca > puntosJugador) {
+      if (puntosBanca === 21) {
+        // Si además la banca tiene 21, gana la banca de manera especial
+        finalizarJuego("banca21");
+      } else {
+        // Si no, gana la banca normal
+        finalizarJuego("banca");
+      }
+      return true;
+    }
+
+    // Si la banca tiene menos puntos que el jugador
+    if (puntosBanca < puntosJugador) {
+      if (puntosJugador === 21) {
+        // Si además el jugador tiene 21, gana el jugador de manera especial
+        finalizarJuego("jugador21");
+      } else {
+        // Si no, gana el jugador normal
+        finalizarJuego("jugador");
+      }
+      return true;
+    }
+  }
+
+  return false; // Si nada de esto sucede, la partida sigue
+}
+
 // Función para calcular los puntos de una carta según su número de imagen
-// Dentro de cada palo: 1=A, 2-10, 11=J, 12=Q, 13=K
+// Dentro de cada palo: A=1, 2-10, J=10, Q=10, K=10
 function calcularPuntos(numFoto) {
   const num = ((numFoto - 1) % 13) + 1;
 
